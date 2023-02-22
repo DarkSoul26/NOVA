@@ -31,7 +31,7 @@ const serviceAccountAuth = new google.auth.JWT({
 });
 
 const calendar = google.calendar("v3");
-process.env.DEBUG = "dialogflow:*"; // enables lib debugging statements
+process.env.DEBUG = "dialogflow:*"; // enables lib debuggin  g statements
 
 const timeZone = "Asia/Kolkata";
 const timeZoneOffset = "+05:30";
@@ -50,15 +50,15 @@ app.post("/webhook", express.json(), (req, res) => {
         },
         (err, res) => {
           if (err || res.data.items.length > 0) {
-            console.log(err.response.data.error);
-            reject(`The even is conflicting with another event`);
+            // console.log(err.response.data.error);
+            return reject(`The event is conflicting with another event`);
           } else {
             calendar.events.insert(
               {
                 auth: serviceAccountAuth,
                 calendarId: calendarId,
                 resource: {
-                  summary: appointment + "Reminder",
+                  summary: appointment,
                   description: appointment,
                   start: { dateTime: startTime },
                   end: { dateTime: endTime },
@@ -118,6 +118,7 @@ app.post("/webhook", express.json(), (req, res) => {
 
   let intentMap = new Map();
   intentMap.set("schedule_drv", makeAppointment);
+  
   agent.handleRequest(intentMap);
 });
 
