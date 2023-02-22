@@ -10,7 +10,7 @@ export class Chat extends Component {
         popupWidget: true,
         automaticChatOpenOnNavigation: true,
         voiceOutput: true,
-        voiceName: "Google US English", // Replace Google Deutsch with the voiceName or an array of voiceNames from the below mentioned table list
+        voiceName: "Google US English",
         voiceRate: 1,
       };
       var s = document.createElement("script");
@@ -22,7 +22,6 @@ export class Chat extends Component {
       window.kommunicate = m;
       m._globals = kommunicateSettings;
     })(document, window.kommunicate || {});
-    /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
   }
   render() {
     return (
