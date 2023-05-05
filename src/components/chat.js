@@ -1,12 +1,17 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/alt-text */
-import React, { Component } from "react";
-import ParticlesBackground from "./ParticlesBackground";
+import React, { Component, useState } from "react";
+// import ParticlesBackground from "./ParticlesBackground";
+import "../App.css";
+// import Dictaphone from "./Dictaphone";
+// import TextAreas from "./TextAreas";
 
 export class Chat extends Component {
   componentDidMount() {
-    (function (d, m) {
+    (function(d, m) {
       var kommunicateSettings = {
-        appId: "36d4f23f4b42c8b8a1c5561b950a7ac1a",
+        // appId: "36d4f23f4b42c8b8a1c5561b950a7ac1a",
+        appId: "16e3105f0a89c6c2c6bd3bf573e406564",
         popupWidget: true,
         automaticChatOpenOnNavigation: true,
         voiceOutput: true,
@@ -24,11 +29,23 @@ export class Chat extends Component {
     })(document, window.kommunicate || {});
   }
   render() {
+    // const [speech, setSpeech] = useState("");
+
+    // function handleAddText(trnsData) {
+    //   setSpeech(trnsData);
+    // }
+
     return (
       <div>
-        <ParticlesBackground />
+        {/* <ParticlesBackground /> */}
+        {/* <div id="record">
+          <Dictaphone handleAddText={handleAddText} />
+        </div>
+        <div>
+          <TextAreas spoken={speech} />
+        </div> */}
         <h1 style={{ color: "white", fontSize: "40px" }}>NOVA</h1>
-        <div style={{marginTop: "7%"}}>
+        <div style={{ marginTop: "7%" }}>
           <img src="nova.gif"></img>
         </div>
       </div>
