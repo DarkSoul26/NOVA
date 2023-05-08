@@ -28,15 +28,15 @@
 
 // export const { useLazyGetSummaryQuery } = articleApi;
 
-import { eventWrapper } from "@testing-library/user-event/dist/utils";
+// import { eventWrapper } from "@testing-library/user-event/dist/utils";
 import axios from "axios";
 import { useState } from "react";
 
 const rapidApiKey = process.env.REACT_APP_API_ARTICLE_KEY;
 
 export const useLazyGetSummaryQuery = () => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  // const [data, setData] = useState(null);
+  // const [error, setError] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   // const [articleUrl, setArticleUrl] = useState("");
   // const axios = require("axios");
@@ -60,7 +60,7 @@ export const useLazyGetSummaryQuery = () => {
       setIsFetching(true);
       // setArticleUrl(articleUrl);
       const response = await axios.request(options);
-      setData(response.data.summary);
+      // setData(response.data.summary);
       console.log(response.data.summary);
       return response.data.summary;
     } catch (error) {
