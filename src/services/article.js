@@ -36,7 +36,7 @@ const rapidApiKey = process.env.REACT_APP_API_ARTICLE_KEY;
 
 export const useLazyGetSummaryQuery = () => {
   // const [data, setData] = useState(null);
-  // const [error, setError] = useState(null);
+  const [error, setError] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   // const [articleUrl, setArticleUrl] = useState("");
   // const axios = require("axios");
@@ -64,6 +64,7 @@ export const useLazyGetSummaryQuery = () => {
       console.log(response.data.summary);
       return response.data.summary;
     } catch (error) {
+      setError(error);
       console.error(error);
     } finally {
       setIsFetching(false);
