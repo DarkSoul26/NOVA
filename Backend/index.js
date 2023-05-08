@@ -6,9 +6,10 @@ const axios = require("axios");
 const { WebhookClient } = require("dialogflow-fulfillment");
 const app = express();
 const { google } = require("googleapis");
-const {BigQuery} = require('@google-cloud/bigquery');
+const { BigQuery } = require("@google-cloud/bigquery");
 
-const calendarId = 
+const calendarId =
+  // "sanchitkalsi@gmail.com"
   // "9c34854634a8fa5374709425626aec971a66b140088ac13c23e46063bbd6dc46@group.calendar.google.com"
   "412abf3f6a5ed95d0413ab0275ffb2e18b62303bc1ea04278a29225000719970@group.calendar.google.com";
 const serviceAccount = {
@@ -81,45 +82,127 @@ app.post("/webhook", express.json(), (req, res) => {
   }
 
   function addToBigQuery(agent, appointment) {
-    const date_bq = agent.parameters.date.split('T')[0];
-    const time_bq = agent.parameters.time.split('T')[1].split('+')[0];
+    const date_bq = agent.parameters.date.split("T")[0];
+    const time_bq = agent.parameters.time.split("T")[1].split("+")[0];
     /**
-    * TODO(developer): Uncomment the following lines before running the sample.
-    */
-    const projectId = "ajax-yhar"; 
+     * TODO(developer): Uncomment the following lines before running the sample.
+     */
+    // console.log("trying to add nottt content");
+    const projectId = "ajax-yhar";
     const datasetId = "demo_dataset";
     const tableId = "demo_table";
     const bigquery = new BigQuery({
-      projectId: projectId
+      projectId: projectId,
     });
-   const rows = [{date: date_bq, time: time_bq, type: appointment}];
-  
-   bigquery
-  .dataset(datasetId)
-  .table(tableId)
-  .insert(rows)
-  .then(() => {
-    // console.log(`Inserted ${rows.length} rows`);
-    agent.add(`Added ${date_bq} and ${time_bq} into the table`);
-  })
-  .catch(err => {
-    if (err && err.name === 'PartialFailureError') {
-      if (err.errors && err.errors.length > 0) {
-        console.log('Insert errors:');
-        err.errors.forEach(err => console.error(err));
-      }
-    } else {
-      console.error('ERROR:', err);
-    }
-  });
-}
+    const rows = [{ date: date_bq, time: time_bq, type: appointment }];
+
+    bigquery
+      .dataset(datasetId)
+      .table(tableId)
+      .insert(rows)
+      .then(() => {
+        // console.log(`Inserted ${rows.length} rows`);
+        agent.add(`Added ${date_bq} and ${time_bq} into the table`);
+      })
+      .catch((err) => {
+        if (err && err.name === "PartialFailureError") {
+          if (err.errors && err.errors.length > 0) {
+            console.log("Insert errors:");
+            err.errors.forEach((err) => console.error(err));
+          }
+        } else {
+          console.error("ERROR:", err);
+        }
+      });
+  }
+
+  //expense manager table
+  function addToBQExpIn(agent) {
+    const receivedFrom = agent.parameters.person.name;
+    const amount =
+      agent.parameters.unit_currency.currency +
+      agent.parameters.unit_currency.amount;
+    const timestamp = agent.parameters.date_time.split("T")[0];
+
+    const projectId = "ajax-yhar";
+    const datasetId = "expense_manager";
+    const tableId = "expense_inflow";
+    // console.log("trying to add inflow content");
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+    const rows = [
+      { receivedFrom: receivedFrom, amount: amount, timestamp: timestamp },
+    ];
+
+    bigquery
+      .dataset(datasetId)
+      .table(tableId)
+      .insert(rows)
+      .then(() => {
+        agent.add(
+          `Added material of ${amount} from ${receivedFrom} at ${timestamp} into the table`
+        );
+      })
+      .catch((err) => {
+        if (err && err.name === "PartialFailureError") {
+          if (err.errors && err.errors.length > 0) {
+            console.log("Insert errors:");
+            err.errors.forEach((err) => console.error(err));
+          }
+        } else {
+          console.error("ERROR:", err);
+        }
+      });
+  }
+
+  function addToBQExpOut(agent) {
+    const expenseCategory = agent.parameters.expenseCategory;
+    const amount = agent.parameters.unit_currency;
+    const timestamp = agent.parameters.date_time;
+
+    const projectId = "ajax-yhar";
+    const datasetId = "expense_manager";
+    const tableId = "expense_outflow";
+
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+    const rows = [
+      {
+        expenseCategory: expenseCategory,
+        amount: amount,
+        timestamp: timestamp,
+      },
+    ];
+
+    bigquery
+      .dataset(datasetId)
+      .table(tableId)
+      .insert(rows)
+      .then(() => {
+        agent.add(
+          `Debited income of ${amount} in ${expenseCategory} at ${timestamp}`
+        );
+      })
+      .catch((err) => {
+        if (err && err.name === "PartialFailureError") {
+          if (err.errors && err.errors.length > 0) {
+            console.log("Insert errors:");
+            err.errors.forEach((err) => console.error(err));
+          }
+        } else {
+          console.error("ERROR:", err);
+        }
+      });
+  }
 
   function makeAppointment(agent) {
     // Calculate appointment start and end datetimes (end = +1hr from start)
     const appointment = agent.parameters.AppointmentType;
     // const date = agent.parameters.date;
     // const time = agent.parameters.time;
-
+    // const isEndDate = agent.parameters.isEndDate;
     const dateTimeStart = new Date(
       Date.parse(
         agent.parameters.date.split("T")[0] +
@@ -128,9 +211,25 @@ app.post("/webhook", express.json(), (req, res) => {
           timeZoneOffset
       )
     );
-    const dateTimeEnd = new Date(
+    let dateTimeEnd = new Date(
       new Date(dateTimeStart).setHours(dateTimeStart.getHours() + 1)
     );
+
+    // if(isEndDate){
+    //   dateTimeEnd = new Date(
+    //     Date.parse(
+    //       agent.parameters.endDate.split("T")[0] +
+    //         "T" +
+    //         agent.parameters.endTime.split("T")[1].split("+")[0] +
+    //         timeZoneOffset
+    //     )
+    //   );
+    // }
+
+    // if(isPriority){
+    //   const priority = agent.parameters.priority;
+    // }
+
     const appointmentTimeString = dateTimeStart.toLocaleString("en-US", {
       month: "long",
       day: "numeric",
@@ -139,37 +238,80 @@ app.post("/webhook", express.json(), (req, res) => {
     });
 
     //   Check the availibility of the time, and make an appointment if there is time on the calendar
-    return createCalendarEvent(appointment, dateTimeStart, dateTimeEnd)
-    // return addToBigQuery(agent, appointment)
-      .then(() => {
-        addToBigQuery(agent, appointment);
-        agent.add(
-          `Ok, let me see if we can fit you in. I have added ${appointment} on ${appointmentTimeString}!`
-        );
-      // addToBigQuery(agent, appointment);
-      }).catch(() => {
-        agent.add(
-          `I'm sorry, there are no slots available for ${appointmentTimeString}.`
-        );
-      });
+    return (
+      createCalendarEvent(appointment, dateTimeStart, dateTimeEnd)
+        // return addToBigQuery(agent, appointment)
+        .then(() => {
+          addToBigQuery(agent, appointment);
+          agent.add(
+            `Ok, let me see if we can fit you in. I have added ${appointment} on ${appointmentTimeString}!`
+          );
+          // addToBigQuery(agent, appointment);
+        })
+        .catch(() => {
+          agent.add(
+            `I'm sorry, there are no slots available for ${appointmentTimeString}.`
+          );
+        })
+    );
   }
 
-  let intentMap = new Map();
-  intentMap.set("schedule_drv", makeAppointment);
-  agent.handleRequest(intentMap);
-});
+  function makeExpIn(agent) {
+    // Calculate appointment start and end datetimes (end = +1hr from start)
+    // const appointment = agent.parameters.AppointmentType;
+    // const date = agent.parameters.date;
+    // const time = agent.parameters.time;
+    // const isEndDate = agent.parameters.isEndDate;
+    // const dateTimeStart = new Date(
+    //   Date.parse(
+    //     agent.parameters.date.split("T")[0] +
+    //       "T" +
+    //       agent.parameters.time.split("T")[1].split("+")[0] +
+    //       timeZoneOffset
+    //   )
+    // );
+    // let dateTimeEnd = new Date(
+    //   new Date(dateTimeStart).setHours(dateTimeStart.getHours() + 1)
+    // );
 
-app.post("/dialogflow", express.json(), (req, res) => {
-  const agent = new WebhookClient({ request: req, response: res });
-  let intentMap = new Map();
-  intentMap.set("Default Welcome Intent", welcome);
-  intentMap.set("Default Fallback Intent", queryGPT);
-  agent.handleRequest(intentMap);
+    // if(isEndDate){
+    //   dateTimeEnd = new Date(
+    //     Date.parse(
+    //       agent.parameters.endDate.split("T")[0] +
+    //         "T" +
+    //         agent.parameters.endTime.split("T")[1].split("+")[0] +
+    //         timeZoneOffset
+    //     )
+    //   );
+    // }
 
-  function welcome(agent) {
-    agent.add(
-      "Hi, I am your personal digital AI assistant, NOVA. How are you doing today?"
-    );
+    // if(isPriority){
+    //   const priority = agent.parameters.priority;
+    // }
+
+    // const appointmentTimeString = dateTimeStart.toLocaleString("en-US", {
+    //   month: "long",
+    //   day: "numeric",
+    //   hour: "numeric",
+    //   timeZone: timeZone,
+    // });
+
+    //   Check the availibility of the time, and make an appointment if there is time on the calendar
+    // return createCalendarEvent(appointment, dateTimeStart, dateTimeEnd)
+    // console.log("into the crowd");
+    addToBQExpIn(agent);
+    agent.add("Added successfully");
+    // .then(() => {
+    //   // addToBigQuery(agent, appointment);
+    //   agent.add(
+    //     `Ok, let me see if we can fit you in. I have added expense!`
+    //   );
+    // // addToBigQuery(agent, appointment);
+    // }).catch(() => {
+    //   agent.add(
+    //     `I'm sorry, no expense added.`
+    //   );
+    // });
   }
 
   async function queryGPT(agent) {
@@ -183,6 +325,7 @@ app.post("/dialogflow", express.json(), (req, res) => {
       `The following is a conversation with an AI assistant that can have meaningful conversations with users. The assistant is helpful, empathic, and friendly. Its objective is to make the user feel better by feeling heard. With each response, the AI assisstant prompts the user to continue the conversation in a natural way.
 AI: Hello, I am your personal digital AI assistant, NOVA. How are you doing today?`,
     ];
+
     let query = agent.query;
     console.log("querytext ", query);
     dialog.push(`User: ${query}`);
@@ -212,6 +355,14 @@ AI: Hello, I am your personal digital AI assistant, NOVA. How are you doing toda
       agent.add("Sorry. Something went wrong. Can you say that again?");
     }
   }
+
+  let intentMap = new Map();
+  intentMap.set("schedule_drv", makeAppointment);
+  // console.log("trying to add inflow content 2.0");
+  intentMap.set("expense_INFLOW", makeExpIn);
+  intentMap.set("expense_OUTFLOW", addToBQExpOut);
+  intentMap.set("Default Fallback Intent", queryGPT);
+  agent.handleRequest(intentMap);
 });
 
 const port = 3000;

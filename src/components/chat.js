@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/alt-text */
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 // import ParticlesBackground from "./ParticlesBackground";
+import Demo from "./Demo";
 import "../App.css";
-// import Dictaphone from "./Dictaphone";
-// import TextAreas from "./TextAreas";
 
 export class Chat extends Component {
   componentDidMount() {
@@ -29,25 +28,13 @@ export class Chat extends Component {
     })(document, window.kommunicate || {});
   }
   render() {
-    // const [speech, setSpeech] = useState("");
-
-    // function handleAddText(trnsData) {
-    //   setSpeech(trnsData);
-    // }
-
     return (
       <div>
-        {/* <ParticlesBackground /> */}
-        {/* <div id="record">
-          <Dictaphone handleAddText={handleAddText} />
-        </div>
-        <div>
-          <TextAreas spoken={speech} />
-        </div> */}
         <h1 style={{ color: "white", fontSize: "40px" }}>NOVA</h1>
         <div style={{ marginTop: "7%" }}>
           <img src="nova.gif"></img>
         </div>
+        <Demo />
       </div>
     );
   }
