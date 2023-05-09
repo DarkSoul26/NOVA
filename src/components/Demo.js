@@ -31,22 +31,22 @@ const Demo = () => {
     const existingArticle = allArticles.find(
       (item) => item.url === article.url
     );
-
+    console.log(existingArticle);
     if (existingArticle) return setArticle(existingArticle);
     // console.log("not submitting 1");
     const data = await getSummary({ articleUrl: article.url });
     // console.log("not submitting 2");
     // console.log(article.url);
     console.log(data);
-    if (data) {
-      const newArticle = { ...article, summary: data };
-      const updatedAllArticles = [newArticle, ...allArticles];
-
-      // update state and local storage
-      setArticle(newArticle);
-      setAllArticles(updatedAllArticles);
-      localStorage.setItem("articles", JSON.stringify(updatedAllArticles));
-    }
+    // if (data) {
+    const newArticle = { ...article, summary: data };
+    const updatedAllArticles = [newArticle, ...allArticles];
+    console.log(updatedAllArticles);
+    // update state and local storage
+    setArticle(newArticle);
+    setAllArticles(updatedAllArticles);
+    localStorage.setItem("articles", JSON.stringify(updatedAllArticles));
+    // }
   };
 
   // copy the url and toggle the icon for user feedback
@@ -91,14 +91,16 @@ const Demo = () => {
             style={{
               borderRadius: "20px",
             }}
-            className="submit_btn peer-focus:border-gray-700 peer-focus:text-gray-700 "
           >
             <p>Summarize</p>
           </button>
         </form>
 
         {/* Browse History */}
-        <div className="flex flex-col gap-1 max-h-60 overflow-y-auto">
+        <div>
+          {/* if({allArticles.size > 1}){
+            <h2 style={{ color: "white", fontSize: "45px" }}>Article Links</h2>
+          } */}
           {allArticles.reverse().map((item, index) => (
             <div
               key={`link-${index}`}
@@ -109,12 +111,9 @@ const Demo = () => {
                 <img
                   src={copied === item.url ? tick : copy}
                   alt={copied === item.url ? "tick_icon" : "copy_icon"}
-                  className="w-[40%] h-[40%] object-contain"
                 />
               </div>
-              <p className="flex-1 font-satoshi text-blue-700 font-medium text-sm truncate">
-                {item.url}
-              </p>
+              <p style={{ color: "white" }}>{`${item.url.substring(0, 100)}...`}</p>
             </div>
           ))}
         </div>
@@ -123,28 +122,24 @@ const Demo = () => {
       {/* Display Result */}
       <div>
         {isFetching ? (
-          <img src={loader} alt="loader" className="w-20 h-20 object-contain" />
+          <img src={loader} alt="loader" />
         ) : error ? (
-          <p className="font-inter font-bold text-black text-center">
+          <p>
             Well, that wasn't supposed to happen...
             <br />
-            <span className="font-satoshi font-normal text-gray-700">
-              {error.data && error.data.error}
-            </span>
+            <span>{error.data && error.data.error}</span>
           </p>
         ) : (
-          // article.summary && (
-          <div className="flex flex-col gap-3">
-            <h2 className="font-satoshi font-bold text-gray-600 text-xl">
-              Article <span className="blue_gradient">Summary</span>
-            </h2>
-            <div className="summary_box">
-              <p className="font-inter font-medium text-sm text-gray-700">
-                {article.summary}
-              </p>
+          article.summary && (
+            <div style={{ margin: "15%" }}>
+              <h2 style={{ color: "white", fontSize: "45px" }}>
+                Article <span>Summary</span>
+              </h2>
+              <div>
+                <p style={{ color: "white", fontSize: "20px" }}>{article.summary}</p>
+              </div>
             </div>
-          </div>
-          // )
+          )
         )}
       </div>
     </section>
