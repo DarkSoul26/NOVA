@@ -2,7 +2,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { Component } from "react";
 // import ParticlesBackground from "./ParticlesBackground";
-import Demo from "./Demo";
+import Summariser from "./Summariser";
+import Toggle from "./Toggle";
 import "../App.css";
 
 export class Chat extends Component {
@@ -27,14 +28,22 @@ export class Chat extends Component {
       m._globals = kommunicateSettings;
     })(document, window.kommunicate || {});
   }
+
   render() {
     return (
       <div>
-        <h1 style={{ color: "white", fontSize: "40px" }}>NOVA</h1>
+        <h1 style={{ color: "white", fontSize: "50px" }}>NOVA</h1>
         <div style={{ marginTop: "7%" }}>
           <img src="nova.gif"></img>
         </div>
-        <Demo />
+        <hr style={{ margin: "5%", marginLeft: "25%", marginRight: "25%" }} />
+        <h2 style={{ color: "white", fontSize: "40px" }}>Article Summariser</h2>
+        <Summariser />
+        <hr style={{ margin: "5%", marginLeft: "25%", marginRight: "25%" }} />
+        <h2 style={{ color: "white", fontSize: "40px" }}>
+          Expense Data Visualisation
+        </h2>
+        <Toggle />
       </div>
     );
   }

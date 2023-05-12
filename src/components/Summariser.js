@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { copy, linkIcon, loader, tick } from "../assets";
 import { useLazyGetSummaryQuery } from "../services/article";
 
-const Demo = () => {
+const Summariser = () => {
   const [article, setArticle] = useState({
     url: "",
     summary: "",
@@ -113,7 +113,10 @@ const Demo = () => {
                   alt={copied === item.url ? "tick_icon" : "copy_icon"}
                 />
               </div>
-              <p style={{ color: "white" }}>{`${item.url.substring(0, 100)}...`}</p>
+              <p style={{ color: "white" }}>{`${item.url.substring(
+                0,
+                100
+              )}...`}</p>
             </div>
           ))}
         </div>
@@ -131,12 +134,15 @@ const Demo = () => {
           </p>
         ) : (
           article.summary && (
-            <div style={{ margin: "15%" }}>
-              <h2 style={{ color: "white", fontSize: "45px" }}>
-                Article <span>Summary</span>
+            <div style={{ marginLeft: "15%", marginRight: "15%" }}>
+              <h2 style={{ color: "white", fontSize: "40px" }}>
+                Article Summary
               </h2>
+
               <div>
-                <p style={{ color: "white", fontSize: "20px" }}>{article.summary}</p>
+                <p style={{ color: "white", fontSize: "20px" }}>
+                  {article.summary}
+                </p>
               </div>
             </div>
           )
@@ -146,4 +152,4 @@ const Demo = () => {
   );
 };
 
-export default Demo;
+export default Summariser;
