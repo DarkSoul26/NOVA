@@ -1,5 +1,5 @@
 import "./App.css";
-import Chat from "./components/Chat";
+import Chat from "../components/Chat.js";
 import React from "react";
 
 function App() {
