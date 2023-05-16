@@ -10,7 +10,7 @@ const Summariser = () => {
   });
   const [allArticles, setAllArticles] = useState([]);
   const [copied, setCopied] = useState("");
-
+  const [error2, setError] = useState(false);
   // RTK lazy query
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
 
@@ -37,16 +37,19 @@ const Summariser = () => {
     const data = await getSummary({ articleUrl: article.url });
     // console.log("not submitting 2");
     // console.log(article.url);
-    console.log(data);
+    // console.log(data);
     // if (data) {
-    const newArticle = { ...article, summary: data };
-    const updatedAllArticles = [newArticle, ...allArticles];
-    console.log(updatedAllArticles);
-    // update state and local storage
-    setArticle(newArticle);
-    setAllArticles(updatedAllArticles);
-    localStorage.setItem("articles", JSON.stringify(updatedAllArticles));
-    // }
+    if (data === undefined) {
+      setError(true);
+    } else {
+      const newArticle = { ...article, summary: data };
+      const updatedAllArticles = [newArticle, ...allArticles];
+      console.log(updatedAllArticles);
+      // update state and local storage
+      setArticle(newArticle);
+      setAllArticles(updatedAllArticles);
+      localStorage.setItem("articles", JSON.stringify(updatedAllArticles));
+    }
   };
 
   // copy the url and toggle the icon for user feedback
@@ -97,7 +100,7 @@ const Summariser = () => {
         </form>
 
         {/* Browse History */}
-        <div>
+        <div style={{ marginLeft: "20%" }}>
           {/* if({allArticles.size > 1}){
             <h2 style={{ color: "white", fontSize: "45px" }}>Article Links</h2>
           } */}
@@ -106,6 +109,7 @@ const Summariser = () => {
               key={`link-${index}`}
               onClick={() => setArticle(item)}
               className="link_card"
+              align="left"
             >
               <div className="copy_btn" onClick={() => handleCopy(item.url)}>
                 <img
@@ -113,10 +117,9 @@ const Summariser = () => {
                   alt={copied === item.url ? "tick_icon" : "copy_icon"}
                 />
               </div>
-              <p style={{ color: "white" }}>{`${item.url.substring(
-                0,
-                100
-              )}...`}</p>
+              <p style={{ color: "white" }}>
+                {index}. {`${item.url.substring(0, 100)}...`}
+              </p>
             </div>
           ))}
         </div>
@@ -127,10 +130,10 @@ const Summariser = () => {
         {isFetching ? (
           <img src={loader} alt="loader" />
         ) : error ? (
-          <p>
-            Well, that wasn't supposed to happen...
+          <p style={{ color: "white", fontSize: "40px" }}>
+            Invalid article! Please add a valid article link.
             <br />
-            <span>{error.data && error.data.error}</span>
+            <span>{error2.data && error.data.error}</span>
           </p>
         ) : (
           article.summary && (
