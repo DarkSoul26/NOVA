@@ -3,7 +3,7 @@ import ReactSwitch from "react-switch";
 import Iframe from "react-iframe";
 
 function Toggle({ lookerstudio }) {
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
 
   const handleChange = (val) => {
     setChecked(val);
