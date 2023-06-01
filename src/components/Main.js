@@ -43,7 +43,12 @@ export class Chat extends Component {
         <h2 style={{ color: "white", fontSize: "40px" }}>
           Expense Data Visualisation
         </h2>
-        <Toggle />
+        <Toggle lookerstudio="https://lookerstudio.google.com/embed/reporting/5bf87f04-4a58-4198-bb7f-b7e85058e552/page/tEnnC" />
+        <hr style={{ margin: "5%", marginLeft: "25%", marginRight: "25%" }} />
+        <h2 style={{ color: "white", fontSize: "40px" }}>
+          Class Schedule Data Visualisation
+        </h2>
+        <Toggle lookerstudio="https://lookerstudio.google.com/embed/reporting/a04d2cc9-c00f-47f0-b79d-fc11bbfa2f73/page/tEnnC" />
       </div>
     );
   }

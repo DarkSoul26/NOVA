@@ -100,7 +100,7 @@ const Summariser = () => {
         </form>
 
         {/* Browse History */}
-        <div style={{ marginLeft: "20%" }}>
+        <div style={{ marginLeft: "20%", marginRight: "20%" }}>
           {/* if({allArticles.size > 1}){
             <h2 style={{ color: "white", fontSize: "45px" }}>Article Links</h2>
           } */}
